@@ -4,11 +4,11 @@ using UnityEngine;
 
 public delegate void OnSwipe(SwipeDirection swipeDir);
 
-public class StupidSwipeDetector : MonoBehaviour
+public class StupidSwipeDetector
 {
 	private static float minDistanceForSwipe = 1f;
 
-	public static SwipeDirection? DetectSwipe(Vector2 oldPos, Vector2 newPos, OnSwipe swipe, float distance=-1)
+	public static SwipeDirection DetectSwipe(Vector2 oldPos, Vector2 newPos, OnSwipe swipe, float distance=-1)
 	{
 		if (distance < 0)
 		{
@@ -26,7 +26,7 @@ public class StupidSwipeDetector : MonoBehaviour
 			swipe(direction);
 			return direction;
 		}
-		return null;
+		return SwipeDirection.None;
 	}
 
 	private static bool IsVerticalSwipe(float oldY, float newY, float distance)
@@ -43,10 +43,10 @@ public class StupidSwipeDetector : MonoBehaviour
 	{
 		if (minDistanceForSwipe <= 0)
 		{
-			throw new UnityException();
+			throw new IllegalSwipeDistanceException("Distanza per swipe negativa o nulla");
 		}
 
-		StupidSwipeDetector.minDistanceForSwipe = minDistanceForSwipe;
+		StupidSwipeDetector.minDistanceForSwipe = minDistanceForSwipe;	
 	}
 
 	private static float getMinDistanceForSwipe()
