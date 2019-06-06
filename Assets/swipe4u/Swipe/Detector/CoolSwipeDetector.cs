@@ -2,7 +2,7 @@
 using UnityEngine;
 
 
-public class CoolSwipeDetector
+public class CoolSwipeDetector : SwipeDetector
 {
 
 	/// <summary>It detect the swipe even if you keep your finger stuck to the screen. 
@@ -24,7 +24,12 @@ public class CoolSwipeDetector
 
 		if (oldPos != newPos)
 		{
-			return StupidSwipeDetector.DetectSwipe(oldPosCopy, newPos, doSwipe, distance) == direction;
+			if (StupidSwipeDetector.DetectSwipe(oldPosCopy, newPos, doSwipe, distance) == direction)
+			{
+				oldPos = newPos;
+
+				return true;
+			}
 		}
 		
 		return false;

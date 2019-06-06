@@ -4,7 +4,7 @@ using UnityEngine;
 
 public delegate void OnSwipe(SwipeDirection swipeDir);
 
-public class StupidSwipeDetector
+public class StupidSwipeDetector : SwipeDetector
 {
 	private static float minDistanceForSwipe = 1f;
 
