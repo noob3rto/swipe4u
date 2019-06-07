@@ -8,8 +8,11 @@ public class StupidSwipeDetector : SwipeDetector
 {
 	private static float minDistanceForSwipe = 1f;
 
-	public static SwipeDirection DetectSwipe(Vector2 oldPos, Vector2 newPos, OnSwipe swipe, float distance=-1)
+	public static SwipeDirection DetectSwipe(ref Touch oldTouch, ref Touch newTouch, OnSwipe swipe, float distance=-1)
 	{
+		Vector2 oldPos = oldTouch.position;
+		Vector2 newPos = newTouch.position;
+
 		if (distance < 0)
 		{
 			distance = minDistanceForSwipe;
