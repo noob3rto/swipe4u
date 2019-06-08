@@ -18,7 +18,7 @@ public class SwipeDetectorFactory
 	
 	SwipeDetectorFactory(String configuration)
 	{
-
+ 
 	}
 
 

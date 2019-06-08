@@ -8,24 +8,31 @@ public class CoolSwipeDetector : SwipeDetector
 	/// <summary>It detect the swipe even if you keep your finger stuck to the screen. 
 	/// In the next commits this feature will be customizable
 	///</summary>
-	public bool DetectSwipe(ref Touch oldTouch, ref Touch newTouch, SwipeDirection direction, OnSwipe doSwipe, float distance = -1)
+	public override bool DetectSwipe(ref Touch oldTouch, ref Touch newTouch, SwipeDirection direction, OnSwipe doSwipe, float distance = -1)
 	{
 		if (isTouchGood(oldTouch, newTouch))
 		{
+			StupidSwipeDetector stupidDetector = new StupidSwipeDetector();
+
+			//I need to copy because I can't pass ref to delegates
+			Touch oldTouchCopy = oldTouch;
+			Touch newTouchCopy = newTouch;
+
+			OnSwipe doUpdateTouchPos = delegate (SwipeDirection dir) {
+				oldTouchCopy.position = newTouchCopy.position;
+			};
 
 			/*The oldPosition is updated at step of 1f. In this way the swipe can be detected 
 			 * many time without taking out the finger from the screen*/
-			StupidSwipeDetector.DetectSwipe(oldTouch, newTouch, delegate (SwipeDirection dir) {
-				if ((int) dir == - (int) direction)
-					oldTouch.position = newTouch.position;
-			}, 1f);
+			stupidDetector.DetectSwipe(ref oldTouch, ref newTouch, (SwipeDirection)(-(int) direction), doUpdateTouchPos, 1f);
 
+			oldTouch = oldTouchCopy;
 
 			if (oldTouch.position != newTouch.position)
 			{
-				if (StupidSwipeDetector.DetectSwipe(oldTouch, newTouch, doSwipe, distance) == direction)
+				if (stupidDetector.DetectSwipe(ref oldTouch, ref newTouch, direction, doSwipe + doUpdateTouchPos, distance))
 				{
-					oldTouch.position = newTouch.position;
+					oldTouch = oldTouchCopy;
 
 					return true;
 				}
