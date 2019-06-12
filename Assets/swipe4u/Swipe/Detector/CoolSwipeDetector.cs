@@ -6,7 +6,6 @@ public class CoolSwipeDetector : SwipeDetector
 {
 
 	/// <summary>It detect the swipe even if you keep your finger stuck to the screen. 
-	/// In the next commits this feature will be customizable
 	///</summary>
 	public override bool DetectSwipe(ref Touch oldTouch, ref Touch newTouch, SwipeDirection direction, OnSwipe doSwipe, float distance = -1)
 	{

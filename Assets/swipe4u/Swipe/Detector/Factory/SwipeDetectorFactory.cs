@@ -31,7 +31,7 @@ public class SwipeDetectorFactory
 		{
 			if (WHEN_TOUCH_ENDED)
 			{
-				//return a swipeDetector
+				return new ClassicSwipeDetector();
 			}
 
 			return new CoolSwipeDetector();
