@@ -5,7 +5,8 @@ using UnityEngine;
 public class CoolSwipeDetector : SwipeDetector
 {
 
-	/// <summary>It detect the swipe even if you keep your finger stuck to the screen. 
+	/// <summary>It detect the swipe even if you keep your finger stuck to the screen.
+	/// It doesn't consider the movement speed of the finger
 	///</summary>
 	public override bool DetectSwipe(ref Touch oldTouch, ref Touch newTouch, SwipeDirection direction, OnSwipe doSwipe, float distance = -1)
 	{

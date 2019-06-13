@@ -1,24 +1,60 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class ClassicSwipeDetector : SwipeDetector
 {
+	private float minDistSpeedDetection = 1f;
 
-	/// <summary>It detect the swipe only when the touch end. 
+	private float deltaTime = 0f;
+	private float deltaPosition = 0f;
+
+	private float speedLimit = 0.01f;
+
+	/// <summary>It detect the swipe only when the finger is lifted from the screen.
+	/// It detect swipe if the distance between position is big enough or if the finger moves 
+	/// faster then the speed limit
 	///</summary>
 	public override bool DetectSwipe(ref Touch oldTouch, ref Touch newTouch, SwipeDirection direction, OnSwipe doSwipe, float distance = -1)
 	{
+		deltaTime += newTouch.deltaTime;
+		if (IsHorizontalSwipe(direction))
+		{
+			deltaPosition += Math.Abs(newTouch.deltaPosition.x);
+		} 
+		else if (IsHorizontalSwipe(direction))
+		{
+			deltaPosition += Math.Abs(newTouch.deltaPosition.y);
+		}
+
+
 		if (isTouchGood(oldTouch, newTouch))
 		{
-			StupidSwipeDetector stupidDetector = new StupidSwipeDetector();
-			
 			if (oldTouch.position != newTouch.position)
 			{
-				if (stupidDetector.DetectSwipe(ref oldTouch, ref newTouch, direction, doSwipe, distance))
+				OnSwipe resetDelta = delegate {
+					deltaTime = 0f;
+					deltaPosition = 0f;
+				};
+
+				StupidSwipeDetector stupidDetector = new StupidSwipeDetector();
+
+				if (deltaTime/deltaPosition >= speedLimit)
 				{
-					return true;
+					return stupidDetector.DetectSwipe(ref oldTouch, ref newTouch, direction, doSwipe + resetDelta, minDistSpeedDetection);
+				}
+				else
+				{
+					return stupidDetector.DetectSwipe(ref oldTouch, ref newTouch, direction, doSwipe + resetDelta, distance);
 				}
 			}
 		}
+		else if (TouchPhase.Stationary == newTouch.phase)
+		{
+			deltaTime = 0f;
+			deltaPosition = 0f;
+		}
+		//TODO: set deltas if the finger moves in the opposite direction
+
 		return false;
 	}
 
@@ -26,6 +62,11 @@ public class ClassicSwipeDetector : SwipeDetector
 	{
 		return (oldTouch.phase == TouchPhase.Began || oldTouch.phase == TouchPhase.Moved)
 			&& newTouch.phase == TouchPhase.Ended;
+	}
+
+	private void IncrementsDelta(SwipeDirection direction)
+	{
+
 	}
 
 }
