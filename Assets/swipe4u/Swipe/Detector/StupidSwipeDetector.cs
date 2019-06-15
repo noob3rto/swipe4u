@@ -34,8 +34,11 @@ public class StupidSwipeDetector : SwipeDetector
 			if (IsHorizontalSwipe(oldPos.x, newPos.x, distance))
 			{
 				SwipeDirection dirDetected = newPos.x - oldPos.x > 0 ? SwipeDirection.Right : SwipeDirection.Left;
-				doSwipe(direction);
-				return true;
+				if (dirDetected == direction)
+				{
+					doSwipe(direction);
+					return true;
+				}
 			}
 		}
 

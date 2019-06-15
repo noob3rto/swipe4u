@@ -26,6 +26,7 @@ public class CoolSwipeDetector : SwipeDetector
 			 * many time without taking out the finger from the screen*/
 			stupidDetector.DetectSwipe(ref oldTouch, ref newTouch, (SwipeDirection)(-(int) direction), doUpdateTouchPos, 1f);
 
+			//I have to figure out another way to do that, because of this I can't detect two swipes in opposite direction simultaneously
 			oldTouch = oldTouchCopy;
 
 			if (oldTouch.position != newTouch.position)
@@ -38,6 +39,7 @@ public class CoolSwipeDetector : SwipeDetector
 				}
 			}
 		}
+
 		return false;
 	}
 
