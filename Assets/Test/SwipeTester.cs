@@ -17,11 +17,11 @@ public class SwipeTester : MonoBehaviour
 	void Start()
     {
 		swipeRight = delegate {
-			Debug.Log("swipe detected");
+			Debug.Log("swipe right");
 			transform.position += Vector3.right / 20;
 		};
 		swipeLeft = delegate {
-			Debug.Log("swipe detected");
+			Debug.Log("swipe left");
 			transform.position += Vector3.left / 20;
 		};
 	}

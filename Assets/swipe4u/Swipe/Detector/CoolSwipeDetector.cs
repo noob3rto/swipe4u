@@ -1,9 +1,18 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 
 public class CoolSwipeDetector : SwipeDetector
 {
+
+	private Dictionary<int, Touch> oldLocalTouches;
+	
+
+	public CoolSwipeDetector()
+	{
+		oldLocalTouches = new Dictionary<int, Touch>();
+	}
 
 	/// <summary>It detect the swipe even if you keep your finger stuck to the screen.
 	/// It doesn't consider the movement speed of the finger
@@ -12,26 +21,46 @@ public class CoolSwipeDetector : SwipeDetector
 	{
 		if (isTouchGood(oldTouch, newTouch))
 		{
-			StupidSwipeDetector stupidDetector = new StupidSwipeDetector();
+			if (oldTouch.phase == TouchPhase.Began)
+			{
+				if (!oldLocalTouches.ContainsKey((int)direction))
+				{
+					oldLocalTouches.Add((int)direction, oldTouch);
+				}
+				else
+				{
+					oldLocalTouches[(int)direction] = oldTouch;
+				}
+			}
 
+			Touch oldLocalTouch= oldLocalTouches[(int)direction];
+			
 			//I need to copy because I can't pass ref to delegates
-			Touch oldTouchCopy = oldTouch;
 			Touch newTouchCopy = newTouch;
 
-			OnSwipe doUpdateTouchPos = delegate (SwipeDirection dir) {
-				oldTouchCopy.position = newTouchCopy.position;
+			OnSwipe doUpdateLocalTouch = delegate (SwipeDirection dir) {
+				oldLocalTouch.position = newTouchCopy.position;
+				oldLocalTouches[(int)direction] = oldLocalTouch;
 			};
 
+			StupidSwipeDetector stupidDetector = new StupidSwipeDetector();
+
 			/*The oldPosition is updated at step of 1f. In this way the swipe can be detected 
-			 * many time without taking out the finger from the screen*/
-			stupidDetector.DetectSwipe(ref oldTouch, ref newTouch, (SwipeDirection)(-(int) direction), doUpdateTouchPos, 1f);
+			 * many time without taking out the finger from the screen
+			 * I update only the local copy, in this way it's possible to detect opposite swipes simultaneously
+			 */
+			stupidDetector.DetectSwipe(ref oldLocalTouch, ref newTouch, (SwipeDirection)(-(int)direction), doUpdateLocalTouch, 1f);
+			
 
-			//I have to figure out another way to do that, because of this I can't detect two swipes in opposite direction simultaneously
-			oldTouch = oldTouchCopy;
-
-			if (oldTouch.position != newTouch.position)
+			if (oldLocalTouch.position != newTouch.position)
 			{
-				if (stupidDetector.DetectSwipe(ref oldTouch, ref newTouch, direction, doSwipe + doUpdateTouchPos, distance))
+				Touch oldTouchCopy = oldTouch;
+				
+				OnSwipe doUpdateRefTouch = delegate (SwipeDirection dir) {
+					oldTouchCopy.position = newTouchCopy.position;
+				};
+				//if the swipe is detected, I update the real oldTouch
+				if (stupidDetector.DetectSwipe(ref oldLocalTouch, ref newTouch, direction, doSwipe + doUpdateRefTouch + doUpdateLocalTouch, distance))
 				{
 					oldTouch = oldTouchCopy;
 
