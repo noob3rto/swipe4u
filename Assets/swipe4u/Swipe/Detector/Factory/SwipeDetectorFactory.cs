@@ -8,17 +8,14 @@ struct DetectableDirection
 };
 
 public class SwipeDetectorFactory
-{	
-	//detect swipe when taking out the finger from the screen
-	private bool WHEN_TOUCH_ENDED;
-	//detect swipe while moving the finger on the screen
-	private bool WHEN_MOVING;
+{
+	private SwipeSetting[] settings;
 
-	List<DetectableDirection> directions;
+	private	List<DetectableDirection> directions;
 	
-	SwipeDetectorFactory(String configuration)
+	SwipeDetectorFactory(SwipeSetting[] settings)
 	{
- 
+		this.settings = settings;
 	}
 
 
@@ -27,18 +24,28 @@ public class SwipeDetectorFactory
 	/// </summary>
 	public SwipeDetector GetSwipeDetector()
 	{
-		if (WHEN_MOVING)
-		{
-			if (WHEN_TOUCH_ENDED)
-			{
-				return new ClassicSwipeDetector();
-			}
 
-			return new CoolSwipeDetector();
+		foreach (SwipeSetting setting1 in settings)
+		{
+			if (SwipeSetting.InAStupidWay == setting1)
+			{
+				return new StupidSwipeDetector();
+			}
+			else if (SwipeSetting.WhenTouchMove == setting1)
+			{
+				foreach (SwipeSetting setting2 in settings)
+				{
+					if (SwipeSetting.WhenTouchEnd == setting2)
+					{
+						return new ClassicSwipeDetector();
+					}
+				}
+
+				return new CoolSwipeDetector();
+			}
 		}
 
-
-		return new StupidSwipeDetector();
+		return null;
 	}
 
 }
