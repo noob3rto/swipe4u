@@ -1,4 +1,4 @@
-# *swipe4u* &middot;       [![cs-standard-style](https://img.shields.io/badge/code%20style-c#%20standard-brightgreen.svg?style=flat)](https://github.com/raywenderlich/c-sharp-style-guide) ![](https://img.shields.io/badge/dev%20status-30%25-orange.svg?style=flat)
+# *swipe4u* &middot;       [![](https://img.shields.io/badge/code%20style-c%23%20standard-brightgreen.svg?style=flat)](<https://github.com/raywenderlich/c-sharp-style-guide>) ![](https://img.shields.io/badge/dev%20status-30%25-orange.svg?style=flat)
 Swipe4u is a library that helps you using swipes in the Unity development. You don't have to care about all the boring logic behind them, swipe is now easier than ever
 
 ## Features
@@ -6,7 +6,7 @@ Swipe4u provides ready made scripts for all kind of swipes. There is also a fact
 
 In the next commits, common touch handling patterns will be implemented. 
 
-## How to use
+## How to use it
 
 Use it inside the update() function of a Unity script:
 
