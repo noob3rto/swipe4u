@@ -20,7 +20,8 @@ foreach (Touch touch in Input.touches)
 		firstTouch = touch;
 	}
 	newTouch = touch;
-	detector.DetectSwipe(ref firstTouch, ref newTouch, SwipeDirection.Right, 					delegate {
+	detector.DetectSwipe(ref firstTouch, ref newTouch, SwipeDirection.Right, 
+		delegate {
        		//do something when swipe is detected
    		}, minSwipeDistance);
 }		
