@@ -2,7 +2,7 @@
 Swipe4u is a library that helps you using swipes in the Unity development. You don't have to care about all the boring logic behind them, swipe is now easier than ever
 
 ## Features
-Swipe4u provides ready made scripts for all kind of swipes. There is also a factory that helps you choosing the detector that fits you the best. Check out a little example down below
+Swipe4u provides ready made scripts for all kind of swipes. There is also a factory that helps you choosing the detector that fits you the best. Check it out with a little example down below
 
 In the next commits, common touch handling patterns will be implemented. 
 
@@ -12,12 +12,11 @@ Use it inside the update() function of a Unity script:
 
 ```c#
 public SwipeDetector detector = new CoolSwipeDetector();
-public OnSwipe action = delegate { 
-    								//action triggered by swipe
-									};
+public OnSwipe action = delegate { /*action triggered by swipe*/};
+
 void Update()
 {
-    Touch[] touches = Input.Touches;
+	Touch[] touches = Input.Touches;
     
 	detector.DetectSwipe(ref touches, SwipeDirection.Right, action, minSwipeDistance);
 }		
