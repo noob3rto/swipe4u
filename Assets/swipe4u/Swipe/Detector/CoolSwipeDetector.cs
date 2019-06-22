@@ -1,17 +1,58 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
-
 
 public class CoolSwipeDetector : SwipeDetector
 {
 
-	private Dictionary<int, Touch> oldLocalTouches;
-	
-
 	public CoolSwipeDetector()
 	{
 		oldLocalTouches = new Dictionary<int, Touch>();
+	}
+
+
+	public override bool DetectSwipe(ref Touch[] touches, SwipeDirection direction, OnSwipe doSwipe, float distance = -1)
+	{
+		Touch oldTouch, newTouch;
+		foreach (Touch touch in touches)
+		{
+			if (touch.phase == TouchPhase.Began)
+			{
+				Debug.Log("a");
+				if (!oldLocalTouches.ContainsKey((int)direction))
+				{
+					Debug.Log("b");
+					oldLocalTouches.Add((int)direction, touch);
+					oldTouch = touch;
+				}
+				else
+				{
+					Debug.Log("c");
+					oldLocalTouches[(int)direction] = touch;
+					oldTouch = touch;
+				}
+			}
+
+			if (!oldLocalTouches.ContainsKey((int)direction))
+			{
+				Debug.Log("d");
+				oldLocalTouches.Add((int)direction, touch);
+				oldTouch = touch;
+			}
+			else
+			{
+				Debug.Log("e");
+				oldTouch = oldLocalTouches[(int)direction];
+			}
+
+			newTouch = touch;
+
+			if (this.DetectSwipe(ref oldTouch, ref newTouch, direction, doSwipe, distance))
+			{
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/// <summary>It detect the swipe even if you keep your finger stuck to the screen.
@@ -21,26 +62,13 @@ public class CoolSwipeDetector : SwipeDetector
 	{
 		if (isTouchGood(oldTouch, newTouch))
 		{
-			if (oldTouch.phase == TouchPhase.Began)
-			{
-				if (!oldLocalTouches.ContainsKey((int)direction))
-				{
-					oldLocalTouches.Add((int)direction, oldTouch);
-				}
-				else
-				{
-					oldLocalTouches[(int)direction] = oldTouch;
-				}
-			}
-
-			Touch oldLocalTouch= oldLocalTouches[(int)direction];
-			
 			//I need to copy because I can't pass ref to delegates
 			Touch newTouchCopy = newTouch;
+			Touch oldTouchCopy = oldTouch;
 
 			OnSwipe doUpdateLocalTouch = delegate (SwipeDirection dir) {
-				oldLocalTouch.position = newTouchCopy.position;
-				oldLocalTouches[(int)direction] = oldLocalTouch;
+				oldTouchCopy.position = newTouchCopy.position;
+				oldLocalTouches[(int)direction] = oldTouchCopy;
 			};
 
 			StupidSwipeDetector stupidDetector = new StupidSwipeDetector();
@@ -49,18 +77,16 @@ public class CoolSwipeDetector : SwipeDetector
 			 * many time without taking out the finger from the screen
 			 * I update only the local copy, in this way it's possible to detect opposite swipes simultaneously
 			 */
-			stupidDetector.DetectSwipe(ref oldLocalTouch, ref newTouch, (SwipeDirection)(-(int)direction), doUpdateLocalTouch, 1f);
+			stupidDetector.DetectSwipe(ref oldTouch, ref newTouch, (SwipeDirection)(-(int)direction), doUpdateLocalTouch, 1f);
 			
 
-			if (oldLocalTouch.position != newTouch.position)
+			if (oldTouchCopy.position != newTouch.position)
 			{
-				Touch oldTouchCopy = oldTouch;
-				
 				OnSwipe doUpdateRefTouch = delegate (SwipeDirection dir) {
 					oldTouchCopy.position = newTouchCopy.position;
 				};
 				//if the swipe is detected, I update the real oldTouch
-				if (stupidDetector.DetectSwipe(ref oldLocalTouch, ref newTouch, direction, doSwipe + doUpdateRefTouch + doUpdateLocalTouch, distance))
+				if (stupidDetector.DetectSwipe(ref oldTouch, ref newTouch, direction, doSwipe + doUpdateRefTouch + doUpdateLocalTouch, distance))
 				{
 					oldTouch = oldTouchCopy;
 

@@ -8,14 +8,14 @@ public class SwipeTester : MonoBehaviour
 	private OnSwipe swipeRight;
 	private OnSwipe swipeLeft;
 
-
-	Touch oldTouch = new Touch();
-	Touch newTouch = new Touch();
+	private SwipeDetector detector;
 
 
 	// Start is called before the first frame update
 	void Start()
     {
+		detector = new CoolSwipeDetector();
+
 		swipeRight = delegate {
 			Debug.Log("swipe right");
 			transform.position += Vector3.right / 20;
@@ -30,34 +30,12 @@ public class SwipeTester : MonoBehaviour
 	void Update()
 	{
 
-		SwipeDetector detector = new CoolSwipeDetector();
+		Touch[] touches = Input.touches;
 
-		foreach (Touch touch in Input.touches)
-		{
-			if (touch.phase == TouchPhase.Began)
-			{
-				oldTouch = touch;
-			}
-			newTouch = touch;
-
-			Debug.Log("oldTouch " + oldTouch.position);
-			Debug.Log("newTouch " + newTouch.position);
-
-			detector.DetectSwipe(ref oldTouch, ref newTouch, SwipeDirection.Right, swipeRight, 5f);
-			detector.DetectSwipe(ref oldTouch, ref newTouch, SwipeDirection.Left, swipeLeft, 5f);
+		detector.DetectSwipe(ref touches, SwipeDirection.Right, swipeRight, 5f);
+		detector.DetectSwipe(ref touches, SwipeDirection.Left, swipeLeft, 5f);
 
 
-			/*if (touch.phase == TouchPhase.Began)
-			{
-				oldTouch = touch;
-			}
-			else if (touch.phase == TouchPhase.Moved)
-			{
-				newTouch = touch;
-
-				detector.DetectSwipe(ref oldTouch);
-			}*/
-		}
 	}
 
 

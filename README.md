@@ -11,19 +11,15 @@ In the next commits, common touch handling patterns will be implemented.
 Use it inside the update() function of a Unity script:
 
 ```c#
-SwipeDetector detector = new ClassicSwipeDetector();
-
-foreach (Touch touch in Input.touches)
+public SwipeDetector detector = new CoolSwipeDetector();
+public OnSwipe action = delegate { 
+    								//action triggered by swipe
+									};
+void Update()
 {
-	if (touch.phase == TouchPhase.Began)
-	{
-		firstTouch = touch;
-	}
-	newTouch = touch;
-	detector.DetectSwipe(ref firstTouch, ref newTouch, SwipeDirection.Right, 
-		delegate {
-       		//do something when swipe is detected
-   		}, minSwipeDistance);
+    Touch[] touches = Input.Touches;
+    
+	detector.DetectSwipe(ref touches, SwipeDirection.Right, action, minSwipeDistance);
 }		
 
 ```

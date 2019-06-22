@@ -1,10 +1,31 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class StupidSwipeDetector : SwipeDetector
 {
 	private static float minDistanceForSwipe = 1f;
+
+	private Touch oldTouch, newTouch;
+
+	public override bool DetectSwipe(ref Touch[] touches, SwipeDirection direction, OnSwipe doSwipe, float distance = -1)
+	{
+		foreach (Touch touch in touches)
+		{
+			if (touch.phase == TouchPhase.Began)
+			{
+				oldTouch = touch;
+			}
+			else if (touch.phase == TouchPhase.Moved || touch.phase == TouchPhase.Ended)
+			{
+				newTouch = touch;
+
+				if (this.DetectSwipe(ref oldTouch, ref newTouch, direction, doSwipe, distance))
+				{
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 
 
 	public override bool DetectSwipe(ref Touch oldTouch, ref Touch newTouch, SwipeDirection direction, OnSwipe doSwipe, float distance = -1)

@@ -10,6 +10,14 @@ public class ClassicSwipeDetector : SwipeDetector
 
 	private float speedLimit = 0.01f;
 
+
+	public override bool DetectSwipe(ref Touch[] touches, SwipeDirection direction, OnSwipe doSwipe, float distance = -1)
+	{
+		//TODO
+
+		return false;
+	}
+
 	/// <summary>It detect the swipe only when the finger is lifted from the screen.
 	/// It detect swipe if the distance between position is big enough or if the finger moves 
 	/// faster then the speed limit
