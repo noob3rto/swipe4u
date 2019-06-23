@@ -1,5 +1,5 @@
 # *swipe4u* &middot;       [![](https://img.shields.io/badge/code%20style-c%23%20standard-brightgreen.svg?style=flat)](<https://github.com/raywenderlich/c-sharp-style-guide>) ![](https://img.shields.io/badge/dev%20status-30%25-orange.svg?style=flat)
-Swipe4u is a library that helps you using swipes in the Unity development. You don't have to care about all the boring logic behind them, swipe is now easier than ever
+Swipe4u is a library that helps you using swipes in the Unity development. You don't have to struggle developing the logic behind them anymore
 
 ## Features
 Swipe4u provides ready made scripts for all kind of swipes. There is also a factory that helps you choosing the detector that fits you the best. Check it out with a little example down below
