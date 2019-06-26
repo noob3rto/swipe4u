@@ -14,7 +14,7 @@ public class SwipeTester : MonoBehaviour
 	// Start is called before the first frame update
 	void Start()
     {
-		detector = new CoolSwipeDetector();
+		detector = new ClassicSwipeDetector();
 
 		swipeRight = delegate {
 			Debug.Log("swipe right");
@@ -32,8 +32,8 @@ public class SwipeTester : MonoBehaviour
 
 		Touch[] touches = Input.touches;
 
-		detector.DetectSwipe(ref touches, SwipeDirection.Right, swipeRight, 5f);
-		detector.DetectSwipe(ref touches, SwipeDirection.Left, swipeLeft, 5f);
+		detector.DetectSwipe(ref touches, SwipeDirection.Right, swipeRight, 50f);
+		//detector.DetectSwipe(ref touches, SwipeDirection.Left, swipeLeft, 5f);
 
 
 	}

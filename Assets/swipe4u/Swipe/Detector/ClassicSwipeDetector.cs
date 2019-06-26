@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class ClassicSwipeDetector : SwipeDetector
@@ -8,12 +9,70 @@ public class ClassicSwipeDetector : SwipeDetector
 	private float deltaTime = 0f;
 	private float deltaPosition = 0f;
 
-	private float speedLimit = 0.01f;
+	private float speedLimit = 0.3f;
+
+	private OnSwipe resetDeltaPos;
+	private OnSwipe resetDeltaTime;
+
+	public ClassicSwipeDetector()
+	{
+		oldLocalTouches = new Dictionary<int, Touch>();
+
+		resetDeltaPos = delegate {
+			deltaPosition = 0;
+		};
+
+		resetDeltaTime = delegate {
+			deltaTime = 0;
+		};
+	}
 
 
 	public override bool DetectSwipe(ref Touch[] touches, SwipeDirection direction, OnSwipe doSwipe, float distance = -1)
 	{
-		//TODO
+		Touch oldTouch, newTouch;
+		foreach (Touch touch in touches)
+		{
+			Debug.Log(touch.position);
+			if (touch.phase == TouchPhase.Began)
+			{
+				deltaTime = 0;
+
+				if (!oldLocalTouches.ContainsKey((int)direction))
+				{
+					oldLocalTouches.Add((int)direction, touch);
+					oldTouch = touch;
+				}
+				else
+				{
+					oldLocalTouches[(int)direction] = touch;
+					oldTouch = touch;
+				}
+			}
+			else
+			{
+				if (touch.phase == TouchPhase.Stationary)
+				{
+					deltaTime = 0;
+				}
+
+				if (!oldLocalTouches.ContainsKey((int)direction))
+				{
+					oldLocalTouches.Add((int)direction, touch);
+					oldTouch = touch;
+				}
+				else
+				{
+					oldTouch = oldLocalTouches[(int)direction];
+				}
+			}
+			newTouch = touch;
+
+			if (this.DetectSwipe(ref oldTouch, ref newTouch, direction, doSwipe, distance))
+			{
+				return true;
+			}
+		}
 
 		return false;
 	}
@@ -39,30 +98,23 @@ public class ClassicSwipeDetector : SwipeDetector
 		{
 			if (oldTouch.position != newTouch.position)
 			{
-				OnSwipe resetDelta = delegate {
-					deltaTime = 0f;
-					deltaPosition = 0f;
-				};
-
 				StupidSwipeDetector stupidDetector = new StupidSwipeDetector();
-
+				
+				//if the finger go in the opposite direction, i reset the delta time
+				stupidDetector.DetectSwipe(ref oldTouch, ref newTouch, (SwipeDirection)(-(int)direction), resetDeltaTime, 1f);
+				OnSwipe swipeAction = doSwipe + resetDeltaTime + resetDeltaPos;
 				if (deltaTime/deltaPosition >= speedLimit)
 				{
-					return stupidDetector.DetectSwipe(ref oldTouch, ref newTouch, direction, doSwipe + resetDelta, minDistSpeedDetection);
+					Debug.Log("aaa");
+					return stupidDetector.DetectSwipe(ref oldTouch, ref newTouch, direction, swipeAction, minDistSpeedDetection);
 				}
 				else
 				{
-					return stupidDetector.DetectSwipe(ref oldTouch, ref newTouch, direction, doSwipe + resetDelta, distance);
+					Debug.Log("bbb");
+					return stupidDetector.DetectSwipe(ref oldTouch, ref newTouch, direction, swipeAction, distance);
 				}
 			}
 		}
-		else if (TouchPhase.Stationary == newTouch.phase)
-		{
-			deltaTime = 0f;
-			deltaPosition = 0f;
-		}
-		//TODO: set deltas if the finger moves in the opposite direction
-
 		return false;
 	}
 

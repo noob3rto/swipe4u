@@ -17,16 +17,13 @@ public class CoolSwipeDetector : SwipeDetector
 		{
 			if (touch.phase == TouchPhase.Began)
 			{
-				Debug.Log("a");
 				if (!oldLocalTouches.ContainsKey((int)direction))
 				{
-					Debug.Log("b");
 					oldLocalTouches.Add((int)direction, touch);
 					oldTouch = touch;
 				}
 				else
 				{
-					Debug.Log("c");
 					oldLocalTouches[(int)direction] = touch;
 					oldTouch = touch;
 				}
@@ -34,13 +31,11 @@ public class CoolSwipeDetector : SwipeDetector
 
 			if (!oldLocalTouches.ContainsKey((int)direction))
 			{
-				Debug.Log("d");
 				oldLocalTouches.Add((int)direction, touch);
 				oldTouch = touch;
 			}
 			else
 			{
-				Debug.Log("e");
 				oldTouch = oldLocalTouches[(int)direction];
 			}
 
